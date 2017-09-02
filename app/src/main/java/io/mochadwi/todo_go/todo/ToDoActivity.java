@@ -6,8 +6,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,13 +53,19 @@ public class ToDoActivity extends RealmBaseActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
     private void initView() {
         resetRealm();
         realm = Realm.getInstance(getRealmConfig());
         RealmResults<TodoItem> toDoItems = realm
                 .where(TodoItem.class)
                 .findAllSorted("id", Sort.ASCENDING);
-        ToDoRealmAdapter toDoRealmAdapter = new ToDoRealmAdapter(this, toDoItems, true, true);
+        ToDoRealmAdapter toDoRealmAdapter = new ToDoRealmAdapter(this, toDoItems, realm, true, true);
         rvItems.setAdapter(toDoRealmAdapter);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -74,13 +82,15 @@ public class ToDoActivity extends RealmBaseActivity {
 
         LayoutInflater li = LayoutInflater.from(this);
         View dialogView = li.inflate(R.layout.to_do_dialog_view, null);
-        final EditText input = (EditText) dialogView.findViewById(R.id.input);
+        final EditText inputTitle = (EditText) dialogView.findViewById(R.id.input_title);
+        final EditText inputDescription = (EditText) dialogView.findViewById(R.id.input_description);
+        final CalendarView inputDate = (CalendarView) dialogView.findViewById(R.id.input_date);
 
         builder.setView(dialogView);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                addToDoItem(input.getText().toString());
+                addToDoItem(inputTitle.getText().toString());
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -91,7 +101,7 @@ public class ToDoActivity extends RealmBaseActivity {
         });
 
         final AlertDialog dialog = builder.show();
-        input.setOnEditorActionListener(
+        inputTitle.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -99,7 +109,7 @@ public class ToDoActivity extends RealmBaseActivity {
                                 (event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                             dialog.dismiss();
-                            addToDoItem(input.getText().toString());
+                            addToDoItem(inputTitle.getText().toString());
                             return true;
                         }
                         return false;
@@ -117,7 +127,9 @@ public class ToDoActivity extends RealmBaseActivity {
 
         realm.beginTransaction();
         TodoItem todoItem = realm.createObject(TodoItem.class, System.currentTimeMillis());
+        todoItem.setTitle(toDoItemText);
         todoItem.setDescription(toDoItemText);
+        todoItem.setDate(toDoItemText);
         realm.commitTransaction();
     }
 }
