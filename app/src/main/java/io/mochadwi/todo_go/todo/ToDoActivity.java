@@ -2,6 +2,7 @@ package io.mochadwi.todo_go.todo;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
@@ -33,6 +34,7 @@ public class ToDoActivity extends RealmBaseActivity {
 
     // DATA
     private Realm realm;
+    private String selectedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +88,20 @@ public class ToDoActivity extends RealmBaseActivity {
         final EditText inputDescription = (EditText) dialogView.findViewById(R.id.input_description);
         final CalendarView inputDate = (CalendarView) dialogView.findViewById(R.id.input_date);
 
+        inputDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                selectedDate = dayOfMonth + "/" + month + "/" + year;
+            }
+        });
+
         builder.setView(dialogView);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                addToDoItem(inputTitle.getText().toString());
+                addToDoItem(inputTitle.getText().toString(),
+                        inputDescription.getText().toString(),
+                        selectedDate);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -101,7 +112,7 @@ public class ToDoActivity extends RealmBaseActivity {
         });
 
         final AlertDialog dialog = builder.show();
-        inputTitle.setOnEditorActionListener(
+        inputDescription.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -109,7 +120,9 @@ public class ToDoActivity extends RealmBaseActivity {
                                 (event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                             dialog.dismiss();
-                            addToDoItem(inputTitle.getText().toString());
+                            addToDoItem(inputTitle.getText().toString(),
+                                    inputDescription.getText().toString(),
+                                    selectedDate);
                             return true;
                         }
                         return false;
@@ -131,5 +144,29 @@ public class ToDoActivity extends RealmBaseActivity {
         todoItem.setDescription(toDoItemText);
         todoItem.setDate(toDoItemText);
         realm.commitTransaction();
+    }
+
+    private void addToDoItem(String title, String desc, String due) {
+        if (isEmpty(title)) {
+            Toast
+                    .makeText(this, "Empty ToDos Title don't get stuff done!", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
+        realm.beginTransaction();
+        TodoItem todoItem = realm.createObject(TodoItem.class, System.currentTimeMillis());
+        todoItem.setTitle(title);
+        todoItem.setDescription(desc);
+        todoItem.setDate(due);
+        realm.commitTransaction();
+    }
+
+    private boolean isEmpty(String word) {
+        if (word == null || word.length() == 0) {
+            return true;
+        }
+
+        return false;
     }
 }

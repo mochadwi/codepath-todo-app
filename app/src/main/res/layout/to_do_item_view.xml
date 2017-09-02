@@ -47,6 +47,8 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/todo_title_text_view"
         android:layout_gravity="center_vertical"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="16dp"
         android:padding="4dp"
         android:text="due date"
         android:textColor="@android:color/darker_gray"

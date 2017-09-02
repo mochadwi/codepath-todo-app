@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:hint="Task Title"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:inputType="textCapWords"
             android:singleLine="true" />
 

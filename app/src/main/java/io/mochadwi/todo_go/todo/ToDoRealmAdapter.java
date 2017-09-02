@@ -79,9 +79,9 @@ public class ToDoRealmAdapter
     public void onBindRealmViewHolder(ViewHolder viewHolder, int position) {
         final TodoItem toDoItem = realmResults.get(position);
         viewHolder.todoImageView.setBackgroundColor(COLORS[(int) (toDoItem.getId() % COLORS.length)]);
-        viewHolder.todoTitleTextView.setText(toDoItem.getDescription());
+        viewHolder.todoTitleTextView.setText(toDoItem.getTitle());
         viewHolder.todoDescriptionTextView.setText(toDoItem.getDescription());
-        viewHolder.todoDeadlineTextView.setText(toDoItem.getDescription());
+        viewHolder.todoDeadlineTextView.setText(toDoItem.getDate());
     }
 
 //    private void buildAndShowInputDialog() {
