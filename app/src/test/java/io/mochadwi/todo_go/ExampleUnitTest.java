@@ -1,4 +1,4 @@
-package id.or.codelabs.todo_go;
+package io.mochadwi.todo_go;
 
 import org.junit.Test;
 

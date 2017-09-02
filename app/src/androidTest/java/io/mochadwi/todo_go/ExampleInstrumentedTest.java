@@ -1,4 +1,4 @@
-package id.or.codelabs.todo_go;
+package io.mochadwi.todo_go;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("id.or.codelabs.todo_go", appContext.getPackageName());
+        assertEquals("io.mochadwi.todo_go", appContext.getPackageName());
     }
 }
