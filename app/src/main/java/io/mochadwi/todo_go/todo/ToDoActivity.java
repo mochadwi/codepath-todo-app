@@ -60,7 +60,7 @@ public class ToDoActivity extends RealmBaseActivity {
     }
 
     private void initView() {
-        resetRealm();
+//        resetRealm();
         realm = Realm.getInstance(getRealmConfig());
         RealmResults<TodoItem> toDoItems = realm
                 .where(TodoItem.class)
