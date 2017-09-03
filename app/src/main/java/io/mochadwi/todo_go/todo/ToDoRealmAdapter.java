@@ -1,12 +1,15 @@
 package io.mochadwi.todo_go.todo;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CalendarView;
 import android.widget.EditText;
@@ -34,7 +37,8 @@ public class ToDoRealmAdapter
         extends RealmBasedRecyclerViewAdapter<TodoItem, ToDoRealmAdapter.ViewHolder> {
 
     private Context mCtx;
-//    private Realm mRealm;
+    private Realm mRealm;
+    private String selectedDate;
 
     public class ViewHolder extends RealmViewHolder {
 
@@ -47,11 +51,10 @@ public class ToDoRealmAdapter
             super(container);
             ButterKnife.bind(this, container);
 
-            container.setOnLongClickListener(new View.OnLongClickListener() {
+            container.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
-//                    buildAndShowInputDialog();
-                    return true;
+                public void onClick(View v) {
+
                 }
             });
         }
@@ -65,7 +68,7 @@ public class ToDoRealmAdapter
             boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
         this.mCtx = context;
-//        this.mRealm = realm;
+        this.mRealm = realm;
     }
 
     @Override
@@ -82,61 +85,72 @@ public class ToDoRealmAdapter
         viewHolder.todoTitleTextView.setText(toDoItem.getTitle());
         viewHolder.todoDescriptionTextView.setText(toDoItem.getDescription());
         viewHolder.todoDeadlineTextView.setText(toDoItem.getDate());
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buildAndShowInputDialog(toDoItem);
+//                Toast.makeText(mCtx, "This is dialog: " + toDoItem.getId(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-//    private void buildAndShowInputDialog() {
-//        final AlertDialog.Builder builder = new AlertDialog.Builder(mCtx);
-//        builder.setTitle("Update A Task");
-//
-//        LayoutInflater li = LayoutInflater.from(mCtx);
-//        View dialogView = li.inflate(R.layout.to_do_dialog_view, null);
-//        ButterKnife.bind(dialogView);
-//        final EditText inputTitle = (EditText) dialogView.findViewById(R.id.input_title);
-//        final EditText inputDescription = (EditText) dialogView.findViewById(R.id.input_description);
-//        final CalendarView inputDate = (CalendarView) dialogView.findViewById(R.id.input_date);
-//
-//        builder.setView(dialogView);
-//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                editToDoItem(inputTitle.getText().toString());
-//            }
-//        });
-//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-//
-//        final AlertDialog dialog = builder.show();
-//        inputTitle.setOnEditorActionListener(
-//                new EditText.OnEditorActionListener() {
-//                    @Override
-//                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                        if (actionId == EditorInfo.IME_ACTION_DONE ||
-//                                (event.getAction() == KeyEvent.ACTION_DOWN &&
-//                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-//                            dialog.dismiss();
-//                            editToDoItem(inputTitle.getText().toString());
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//    }
+    private void buildAndShowInputDialog(TodoItem item) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mCtx);
+        builder.setTitle("Update A Task");
 
-//    private void editToDoItem(String toDoItemText) {
-//        if (toDoItemText == null || toDoItemText.length() == 0) {
-//            Toast
-//                    .makeText(mCtx, "Empty ToDos don't get stuff done!", Toast.LENGTH_SHORT)
-//                    .show();
-//            return;
-//        }
-//
-//        mRealm.beginTransaction();
-//        TodoItem todoItem = mRealm.createObject(TodoItem.class, System.currentTimeMillis());
-//        todoItem.setDescription(toDoItemText);
-//        mRealm.commitTransaction();
-//    }
+        LayoutInflater li = LayoutInflater.from(mCtx);
+        View dialogView = li.inflate(R.layout.to_do_dialog_view, null);
+        final EditText inputTitle = (EditText) dialogView.findViewById(R.id.input_title);
+        final EditText inputDescription = (EditText) dialogView.findViewById(R.id.input_description);
+        final CalendarView inputDate = (CalendarView) dialogView.findViewById(R.id.input_date);
+
+        inputTitle.setText(item.getTitle());
+        inputDescription.setText(item.getDescription());
+
+        inputDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                selectedDate = dayOfMonth + "/" + month + "/" + year;
+            }
+        });
+
+        builder.setView(dialogView);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void editToDoItem(String toDoItemText) {
+        if (isEmpty(toDoItemText)) {
+            Toast
+                    .makeText(mCtx, "Empty ToDos don't get stuff done!", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
+        mRealm.beginTransaction();
+        TodoItem todoItem = mRealm.createObject(TodoItem.class, System.currentTimeMillis());
+        todoItem.setDescription(toDoItemText);
+        mRealm.commitTransaction();
+    }
+
+    private boolean isEmpty(String word) {
+        if (word == null || word.length() == 0) {
+            return true;
+        }
+
+        return false;
+    }
 }

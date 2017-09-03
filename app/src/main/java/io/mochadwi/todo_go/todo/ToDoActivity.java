@@ -102,6 +102,7 @@ public class ToDoActivity extends RealmBaseActivity {
                 addToDoItem(inputTitle.getText().toString(),
                         inputDescription.getText().toString(),
                         selectedDate);
+                dialog.dismiss();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -111,39 +112,7 @@ public class ToDoActivity extends RealmBaseActivity {
             }
         });
 
-        final AlertDialog dialog = builder.show();
-        inputDescription.setOnEditorActionListener(
-                new EditText.OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_DONE ||
-                                (event.getAction() == KeyEvent.ACTION_DOWN &&
-                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                            dialog.dismiss();
-                            addToDoItem(inputTitle.getText().toString(),
-                                    inputDescription.getText().toString(),
-                                    selectedDate);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-    }
-
-    private void addToDoItem(String toDoItemText) {
-        if (toDoItemText == null || toDoItemText.length() == 0) {
-            Toast
-                    .makeText(this, "Empty ToDos don't get stuff done!", Toast.LENGTH_SHORT)
-                    .show();
-            return;
-        }
-
-        realm.beginTransaction();
-        TodoItem todoItem = realm.createObject(TodoItem.class, System.currentTimeMillis());
-        todoItem.setTitle(toDoItemText);
-        todoItem.setDescription(toDoItemText);
-        todoItem.setDate(toDoItemText);
-        realm.commitTransaction();
+        builder.show();
     }
 
     private void addToDoItem(String title, String desc, String due) {
