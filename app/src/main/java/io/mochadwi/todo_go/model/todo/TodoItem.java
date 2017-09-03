@@ -17,6 +17,9 @@ public class TodoItem implements RealmModel {
     private String description;
     private String date;
 
+    public TodoItem() {
+    }
+
     public long getId() {
         return id;
     }

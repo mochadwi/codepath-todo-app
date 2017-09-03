@@ -21,6 +21,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.mochadwi.todo_go.R;
+import io.mochadwi.todo_go.Todo;
 import io.mochadwi.todo_go.model.todo.TodoItem;
 import io.realm.Realm;
 import io.realm.RealmBasedRecyclerViewAdapter;
@@ -95,7 +96,7 @@ public class ToDoRealmAdapter
         });
     }
 
-    private void buildAndShowInputDialog(TodoItem item) {
+    private void buildAndShowInputDialog(final TodoItem item) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(mCtx);
         builder.setTitle("Update A Task");
 
@@ -119,6 +120,7 @@ public class ToDoRealmAdapter
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                editToDoItem(item);
                 dialog.dismiss();
             }
         });
@@ -132,18 +134,38 @@ public class ToDoRealmAdapter
         builder.show();
     }
 
-    private void editToDoItem(String toDoItemText) {
-        if (isEmpty(toDoItemText)) {
+    private void editToDoItem(final TodoItem item) {
+        if (isEmpty(item.getTitle())) {
             Toast
                     .makeText(mCtx, "Empty ToDos don't get stuff done!", Toast.LENGTH_SHORT)
                     .show();
             return;
         }
 
-        mRealm.beginTransaction();
-        TodoItem todoItem = mRealm.createObject(TodoItem.class, System.currentTimeMillis());
-        todoItem.setDescription(toDoItemText);
-        mRealm.commitTransaction();
+
+        Realm realm = null;
+        try {
+            realm = Realm.getDefaultInstance();
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm bgRealm) {
+                    TodoItem todo = bgRealm.where(TodoItem.class).equalTo("id", item.getId()).findFirst();
+                    todo.setTitle(item.getTitle());
+                    todo.setDescription(item.getDescription());
+                    todo.setDate(item.getDate());
+                }
+            }, new Realm.Transaction.OnSuccess() {
+                @Override
+                public void onSuccess() {
+                    // Original queries and Realm objects are automatically updated.
+                    Toast.makeText(mCtx, "Task has been updated!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } finally {
+            if (realm != null) {
+                realm.close();
+            }
+        }
     }
 
     private boolean isEmpty(String word) {
