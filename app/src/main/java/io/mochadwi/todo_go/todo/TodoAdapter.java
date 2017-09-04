@@ -94,7 +94,7 @@ class TodoAdapter extends RealmRecyclerViewAdapter<Todo, TodoAdapter.MyViewHolde
         return getItem(index).getId();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView title;
         TextView description;
         TextView due;
@@ -103,10 +103,16 @@ class TodoAdapter extends RealmRecyclerViewAdapter<Todo, TodoAdapter.MyViewHolde
 
         MyViewHolder(View view) {
             super(view);
+            itemView.setOnClickListener(this);
             title = (TextView) view.findViewById(R.id.todo_title_text_view);
             description = (TextView) view.findViewById(R.id.todo_description_text_view);
             due = (TextView) view.findViewById(R.id.todo_due_text_view);
             deletedCheckBox = (CheckBox) view.findViewById(R.id.checkBox);
+        }
+
+        @Override
+        public void onClick(View v) {
+
         }
     }
 }

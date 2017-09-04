@@ -35,7 +35,9 @@ import io.mochadwi.todo_go.R;
 import io.mochadwi.todo_go.models.DataHelper;
 import io.mochadwi.todo_go.models.Parent;
 import io.mochadwi.todo_go.models.Todo;
+import io.mochadwi.todo_go.utils.ClickListener;
 import io.mochadwi.todo_go.utils.DividerItemDecoration;
+import io.mochadwi.todo_go.utils.RecyclerTouchListener;
 import io.realm.Realm;
 
 
@@ -79,12 +81,17 @@ public class TodoActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.msg_todo_title);
         realm = Realm.getDefaultInstance();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setOnClickListener(new View.OnClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new ClickListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(TodoActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+            public void onClick(View view, int position) {
+                Toast.makeText(TodoActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
             }
-        });
+
+            @Override
+            public void onLongClick(View view, int position) {
+                Toast.makeText(TodoActivity.this, "Long Clicked!", Toast.LENGTH_SHORT).show();
+            }
+        }));
         setUpTodoRecyclerView();
     }
 
