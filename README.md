@@ -31,9 +31,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://www.dropbox.com/s/k1kt40xece87afi/todo-go.mp4?dl=0' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+[Link to Video Walkthrough](https://www.dropbox.com/s/k1kt40xece87afi/todo-go.mp4)
 
-GIF created with [Quicktime Player](https://support.apple.com/downloads/quicktime).
+Video created with [Quicktime Player](https://support.apple.com/downloads/quicktime).
 
 ## Project Analysis
 
