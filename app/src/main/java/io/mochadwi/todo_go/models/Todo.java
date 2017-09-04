@@ -76,7 +76,7 @@ public class Todo extends RealmObject {
         Parent parent = realm.where(Parent.class).findFirst();
         RealmList<Todo> todos = parent.getTodoList();
 
-        Todo todo = realm.createObject(Todo.class, increment() + System.currentTimeMillis());
+        Todo todo = realm.createObject(Todo.class, increment());
 //        todo = realm.copyFromRealm(item);
         todo.setTitle(item.getTitle());
         todo.setDescription(item.getDescription());

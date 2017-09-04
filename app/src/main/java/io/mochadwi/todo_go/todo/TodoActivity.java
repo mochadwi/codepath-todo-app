@@ -81,17 +81,17 @@ public class TodoActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.msg_todo_title);
         realm = Realm.getDefaultInstance();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Toast.makeText(TodoActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                Toast.makeText(TodoActivity.this, "Long Clicked!", Toast.LENGTH_SHORT).show();
-            }
-        }));
+//        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new ClickListener() {
+//            @Override
+//            public void onClick(View view, int position) {
+//                Toast.makeText(TodoActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onLongClick(View view, int position) {
+//                Toast.makeText(TodoActivity.this, "Long Clicked!", Toast.LENGTH_SHORT).show();
+//            }
+//        }));
         setUpTodoRecyclerView();
     }
 

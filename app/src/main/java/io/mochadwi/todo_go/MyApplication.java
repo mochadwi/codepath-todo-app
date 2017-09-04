@@ -35,7 +35,7 @@ public class MyApplication extends Application {
                         realm.createObject(Parent.class);
                     }
                 })
-                .schemaVersion(3)
+//                .schemaVersion(3)
                 .deleteRealmIfMigrationNeeded()
                 .build();
 //        Realm.deleteRealm(realmConfig); // Delete Realm between app restarts.
