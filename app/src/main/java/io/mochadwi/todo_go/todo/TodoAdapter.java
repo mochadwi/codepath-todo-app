@@ -113,10 +113,6 @@ class TodoAdapter extends RealmRecyclerViewAdapter<Todo, TodoAdapter.MyViewHolde
             @Override
             public void onLongClick(View view, int position) {
                 Toast.makeText(ctx, "Long Clicked pos: " + position, Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(ctx, TodoUpdateActivity.class);
-//                String todo = new Gson().toJson(obj);
-//                i.putExtra("todo", todo);
-                ctx.startActivity(i);
             }
         });
     }
