@@ -16,6 +16,8 @@
 
 package io.mochadwi.todo_go.todo;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,24 +25,35 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import io.mochadwi.todo_go.R;
 import io.mochadwi.todo_go.models.Todo;
+import io.mochadwi.todo_go.utils.ClickListener;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
 
 class TodoAdapter extends RealmRecyclerViewAdapter<Todo, TodoAdapter.MyViewHolder> {
 
+    private Context ctx;
     private boolean inDeletionMode = false;
     private Set<Integer> todosToDelete = new HashSet<Integer>();
 
     TodoAdapter(OrderedRealmCollection<Todo> data) {
         super(data, true);
         setHasStableIds(true);
+    }
+
+    TodoAdapter(Context ctx, OrderedRealmCollection<Todo> data) {
+        super(data, true);
+        setHasStableIds(true);
+        this.ctx = ctx;
     }
 
     void enableDeletionMode(boolean enabled) {
@@ -86,6 +99,26 @@ class TodoAdapter extends RealmRecyclerViewAdapter<Todo, TodoAdapter.MyViewHolde
             holder.deletedCheckBox.setOnCheckedChangeListener(null);
         }
         holder.deletedCheckBox.setVisibility(inDeletionMode ? View.VISIBLE : View.GONE);
+
+        holder.setOnClickListener(new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(ctx, "Clicked pos: " + position, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(ctx, TodoUpdateActivity.class);
+//                String todo = new Gson().toJson(obj);
+//                i.putExtra("todo", todo);
+                ctx.startActivity(i);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                Toast.makeText(ctx, "Long Clicked pos: " + position, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(ctx, TodoUpdateActivity.class);
+//                String todo = new Gson().toJson(obj);
+//                i.putExtra("todo", todo);
+                ctx.startActivity(i);
+            }
+        });
     }
 
     @Override
@@ -94,25 +127,40 @@ class TodoAdapter extends RealmRecyclerViewAdapter<Todo, TodoAdapter.MyViewHolde
         return getItem(index).getId();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView title;
         TextView description;
         TextView due;
         CheckBox deletedCheckBox;
         public Todo data;
+        private ClickListener listener;
 
         MyViewHolder(View view) {
             super(view);
+
+            itemView.setTag(itemView);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+
             title = (TextView) view.findViewById(R.id.todo_title_text_view);
             description = (TextView) view.findViewById(R.id.todo_description_text_view);
             due = (TextView) view.findViewById(R.id.todo_due_text_view);
             deletedCheckBox = (CheckBox) view.findViewById(R.id.checkBox);
         }
 
+        public void setOnClickListener(ClickListener listener) {
+            this.listener = listener;
+        }
+
         @Override
         public void onClick(View v) {
+            listener.onClick(v, getAdapterPosition());
+        }
 
+        @Override
+        public boolean onLongClick(View v) {
+            listener.onLongClick(v, getAdapterPosition());
+            return false;
         }
     }
 }

@@ -6,6 +6,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import io.mochadwi.todo_go.models.Todo;
+
 /**
  * Created by mochadwi on 9/4/17.
  */
@@ -14,6 +16,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
     private ClickListener clicklistener;
     private GestureDetector gestureDetector;
+    private Todo itemTodo;
 
     public RecyclerTouchListener(Context context, final RecyclerView recycleView, final ClickListener clicklistener) {
 

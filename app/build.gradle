@@ -55,5 +55,6 @@ dependencies {
     compile 'com.github.thorbenprimke:realm-recyclerview:0.9.25'
     compile 'io.realm:android-adapters:2.1.0'
     compile 'com.github.thorbenprimke:realm-nytimes-data:0.9.7'
+    compile 'com.google.code.gson:gson:2.8.1'
     testCompile 'junit:junit:4.12'
 }

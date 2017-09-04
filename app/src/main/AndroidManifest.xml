@@ -31,6 +31,7 @@
             android:name=".todo.TodoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
+        <activity android:name=".todo.TodoUpdateActivity"></activity>
     </application>
 
 </manifest>

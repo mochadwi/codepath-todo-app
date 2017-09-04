@@ -16,6 +16,7 @@
 package io.mochadwi.todo_go.todo;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -51,6 +52,7 @@ public class TodoActivity extends AppCompatActivity {
     private Realm realm;
     private String selectedDate;
     private TodoAdapter todoAdapter;
+    private static final int UPDATE_CODE = 0;
 
     private class TouchHelperCallback extends ItemTouchHelper.SimpleCallback {
 
@@ -77,29 +79,19 @@ public class TodoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recyclerview);
+        setContentView(R.layout.activity_todo);
         getSupportActionBar().setTitle(R.string.msg_todo_title);
+
         realm = Realm.getDefaultInstance();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-//        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new ClickListener() {
-//            @Override
-//            public void onClick(View view, int position) {
-//                Toast.makeText(TodoActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onLongClick(View view, int position) {
-//                Toast.makeText(TodoActivity.this, "Long Clicked!", Toast.LENGTH_SHORT).show();
-//            }
-//        }));
         setUpTodoRecyclerView();
     }
 
     /*
-     * It is good practice to null the reference from the view to the adapter when it is no longer needed.
-     * Because the <code>RealmRecyclerViewAdapter</code> registers itself as a <code>RealmResult.ChangeListener</code>
-     * the view may still be reachable if anybody is still holding a reference to the <code>RealmResult>.
-     */
+         * It is good practice to null the reference from the view to the adapter when it is no longer needed.
+         * Because the <code>RealmRecyclerViewAdapter</code> registers itself as a <code>RealmResult.ChangeListener</code>
+         * the view may still be reachable if anybody is still holding a reference to the <code>RealmResult>.
+         */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -142,7 +134,8 @@ public class TodoActivity extends AppCompatActivity {
     }
 
     private void setUpTodoRecyclerView() {
-        todoAdapter = new TodoAdapter(realm.where(Parent.class).findFirst().getTodoList());
+        todoAdapter = new TodoAdapter(TodoActivity.this,
+                realm.where(Parent.class).findFirst().getTodoList());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(todoAdapter);
         recyclerView.setHasFixedSize(true);
